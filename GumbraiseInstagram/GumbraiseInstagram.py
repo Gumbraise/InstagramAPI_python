@@ -155,3 +155,4 @@ class GumbraiseInstagram:
         return self.LastJson
     def getSelfUserFollowers(self):
         return self.getUserFollowers(self.username_id)
+    
