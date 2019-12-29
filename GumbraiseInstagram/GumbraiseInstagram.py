@@ -116,4 +116,42 @@ class GumbraiseInstagram:
     def logout(self):
         logout = self.SendRequest('accounts/logout/')
 
-        
+    def unfollow(self, userId):
+        data = json.dumps({'_uuid': self.uuid,
+                           '_uid': self.username_id,
+                           'user_id': userId,
+                           '_csrftoken': self.token})
+        return self.SendRequest('friendships/destroy/' + str(userId) + '/', self.generateSignature(data))
+
+    def getUserFollowings(self, usernameId, maxid=''):
+        url = 'friendships/' + str(usernameId) + '/following/?'
+        query_string = {'ig_sig_key_version': self.SIG_KEY_VERSION,
+                        'rank_token': self.rank_token}
+        if maxid:
+            query_string['max_id'] = maxid
+        if sys.version_info.major == 3:
+            url += urllib.parse.urlencode(query_string)
+        else:
+            url += urllib.urlencode(query_string)
+
+        self.SendRequest(url)
+        return self.LastJson
+
+    def getSelfUsersFollowing(self):
+        return self.getUserFollowings(self.username_id)
+
+    def getUserFollowers(self, usernameId, maxid=''):
+        url = 'friendships/' + str(usernameId) + '/followers/?'
+        query_string = {'ig_sig_key_version': self.SIG_KEY_VERSION,
+                        'rank_token': self.rank_token}
+        if maxid:
+            query_string['max_id'] = maxid
+        if sys.version_info.major == 3:
+            url += urllib.parse.urlencode(query_string)
+        else:
+            url += urllib.urlencode(query_string)
+
+        self.SendRequest(url)
+        return self.LastJson
+    def getSelfUserFollowers(self):
+        return self.getUserFollowers(self.username_id)
